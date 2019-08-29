@@ -87,7 +87,43 @@ export default function useGoogleAutocomplete({
       });
     }
 
-    const theFn = () => {
+    // const theFn = () => {
+    //   const types =
+    //     options.types && type === "places" ? `&types=${options.types}` : "";
+    //   const strictbounds =
+    //     options.strictbounds && types === "places" ? `&strictbounds` : "";
+    //   const offset =
+    //     options.offset && type === "query" ? `&offset=${options.offset}` : "";
+    //   const language = options.language ? `&language=${options.language}` : "";
+    //   const location = options.location ? `&location=${options.location}` : "";
+    //   const radius = options.radius ? `&radius=${options.radius}` : "";
+    //   const components = options.components
+    //     ? `&components=${options.components}`
+    //     : "";
+
+    //   const url = `${cors}https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}${types}${language}${location}${radius}${components}${strictbounds}${offset}&key=${apiKey}&sessiontoken=${sessionToken.current}`;
+
+    //   fetch(url, { signal: abortSignal.current })
+    //     .then(data => data.json())
+    //     .then(data => {
+    //       dispatch({
+    //         type: data.status,
+    //         payload: {
+    //           data
+    //         }
+    //       });
+    //     })
+    //     .catch(() => {
+    //       // Component unmounted and API call cancelled.
+    //       // Reset AbortController.
+    //       if (abortController.current.signal.aborted) {
+    //         abortController.current = new AbortController();
+    //         abortSignal.current = abortController.current.signal;
+    //       }
+    //     });
+    // };
+
+    debouncedFn.current = debounce(() => {
       const types =
         options.types && type === "places" ? `&types=${options.types}` : "";
       const strictbounds =
@@ -121,9 +157,7 @@ export default function useGoogleAutocomplete({
             abortSignal.current = abortController.current.signal;
           }
         });
-    };
-
-    debouncedFn.current = debounce(theFn, debounceMs);
+    }, debounceMs);
 
     debouncedFn.current();
   }, [
