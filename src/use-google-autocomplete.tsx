@@ -12,10 +12,10 @@ const initialState = {
   error: null
 };
 
-const cors =
-  process.env.NODE_ENV !== "production"
-    ? "https://cors-anywhere.herokuapp.com/"
-    : "";
+const cors = "";
+// process.env.NODE_ENV !== "production"
+//   ? "https://cors-anywhere.herokuapp.com/"
+//   : "";
 
 export default function useGoogleAutocomplete({
   apiKey,
