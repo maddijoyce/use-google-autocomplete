@@ -13,6 +13,7 @@ export interface AutocompleteProps {
   query: string;
   type?: "places" | "query";
   debounceMs?: number;
+  throttleMs?: number;
   options?: GoogleProps;
 }
 

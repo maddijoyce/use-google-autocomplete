@@ -22,6 +22,7 @@ export default function useGoogleAutocomplete({
   query,
   type = "places",
   debounceMs = 400,
+  throttleMs,
   options = {}
 }: AutocompleteProps) {
   const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -86,7 +87,7 @@ export default function useGoogleAutocomplete({
       });
     }
 
-    debouncedFn.current = debounce(() => {
+    const theFn = () => {
       const types =
         options.types && type === "places" ? `&types=${options.types}` : "";
       const strictbounds =
@@ -120,7 +121,9 @@ export default function useGoogleAutocomplete({
             abortSignal.current = abortController.current.signal;
           }
         });
-    }, debounceMs);
+    };
+
+    debouncedFn.current = debounce(theFn, debounceMs);
 
     debouncedFn.current();
   }, [
@@ -292,4 +295,30 @@ function debounce(func: () => any, wait: number, immediate?: boolean) {
   };
 
   return executedFunction;
-}
+};
+
+function debounceWithThrottle(func: () => any, debouncewait: number, throttlewait: number, callatstart: boolean, callatend: boolean) {
+	let debouncetimeout: any, throttletimeout: any;
+
+	return function() {
+		let context = this, args: any = arguments;
+
+		if (callatstart && !debouncetimeout)  func.apply(context, [].concat(args, 'start' as any));
+
+		if (!throttletimeout && throttlewait > 0)
+		{
+			throttletimeout = setInterval(function() {
+				func.apply(context, [].concat(args, 'during' as any));
+			}, throttlewait);
+		}
+
+		clearTimeout(debouncetimeout);
+		debouncetimeout = setTimeout(function() {
+			clearTimeout(throttletimeout);
+			throttletimeout = null;
+			debouncetimeout = null;
+
+			if (callatend)  func.apply(context, [].concat(args, 'end' as any));
+		}, debouncewait);
+	};
+};
