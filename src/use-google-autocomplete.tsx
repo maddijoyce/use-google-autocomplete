@@ -300,7 +300,7 @@ function debounce(func: () => any, wait: number, immediate?: boolean) {
 function debounceWithThrottle(func: () => any, debouncewait: number, throttlewait: number, callatstart: boolean, callatend: boolean) {
 	let debouncetimeout: any, throttletimeout: any;
 
-	return function() {
+  const executedFunction = function() {
 		let context = this, args: any = arguments;
 
 		if (callatstart && !debouncetimeout)  func.apply(context, [].concat(args, 'start' as any));
@@ -320,5 +320,14 @@ function debounceWithThrottle(func: () => any, debouncewait: number, throttlewai
 
 			if (callatend)  func.apply(context, [].concat(args, 'end' as any));
 		}, debouncewait);
-	};
+  };
+  
+  executedFunction.clear = function() {
+    clearTimeout(debouncetimeout);
+    clearTimeout(throttletimeout);
+    debouncetimeout = null;
+    throttletimeout = null;
+  };
+
+	return executedFunction;
 };
